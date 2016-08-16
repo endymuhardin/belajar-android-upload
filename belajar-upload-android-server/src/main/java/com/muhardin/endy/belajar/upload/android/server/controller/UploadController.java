@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UploadController {
-    private final String uploadFolder = "/uploads";
+    public static final String UPLOAD_FOLDER = "uploads";
     
     @RequestMapping(method = RequestMethod.GET, value = "/list")
     public List<Map<String, String>> listUploads(HttpServletRequest req){
@@ -21,10 +21,10 @@ public class UploadController {
         
         fileInfo.put("nama", namaFile);
         
-        String url = req.getContextPath()+uploadFolder+"/"+namaFile;
+        String url = req.getContextPath()+UPLOAD_FOLDER+"/"+namaFile;
         fileInfo.put("url", url);
         
-        String realPath = req.getServletContext().getRealPath(uploadFolder);
+        String realPath = req.getServletContext().getRealPath(UPLOAD_FOLDER);
         String path = realPath + File.separator + namaFile;
         fileInfo.put("path", path);
         fileInfo.put("ukuran", "123KB");
