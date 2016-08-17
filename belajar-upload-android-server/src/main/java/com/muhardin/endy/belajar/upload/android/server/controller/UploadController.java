@@ -40,7 +40,7 @@ public class UploadController {
     public List<Map<String, Object>> listUploads(HttpServletRequest req) throws IOException {
         return Files.walk(Paths.get(UPLOAD_FOLDER))
                 .filter(path -> !path.equals(Paths.get(UPLOAD_FOLDER)))
-                .map(path -> pathToMap(path))
+                .map(path -> pathToMap(path, req.getContextPath()))
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +69,8 @@ public class UploadController {
                 Files.copy(file.getInputStream(), Paths.get(UPLOAD_FOLDER, newFilename));
                 LOGGER.info("You successfully uploaded {} to {}", file.getOriginalFilename(), newFilename);
                 hasil.put("success", true);
-                hasil.put("url", Paths.get(UPLOAD_FOLDER, newFilename));
+                hasil.put("filename", newFilename);
+                hasil.put("url", req.getContextPath() + "uploads/" +newFilename);
             } catch (IOException | RuntimeException e) {
                 LOGGER.error(e.getMessage(), e);
                 hasil.put("success", false);
@@ -83,10 +84,10 @@ public class UploadController {
         return hasil;
     }
 
-    private Map<String, Object> pathToMap(Path p) {
+    private Map<String, Object> pathToMap(Path p, String contextPath) {
         try {
             Map<String, Object> hasil = new LinkedHashMap<>();
-            hasil.put("url", p.toString());
+            hasil.put("url", contextPath + "uploads/" + p.toString());
             hasil.put("path", p.toAbsolutePath());
             hasil.put("size", Files.size(p));
             return hasil;
